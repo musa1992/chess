@@ -25,38 +25,23 @@ class Board
       print "#{idx + 1} "
       row.each_with_index do |el, index|
         if idx.even?
-          if index.even?
-            if !el.is_a? Integer
-              print " #{el} ".on_magenta
-            else
-              print '   '.on_magenta
-            end
-          else
-            if !el.is_a? Integer
-              print " #{el} ".on_yellow
-            else
-              print '   '.on_yellow
-            end
-          end
-        else
-          if index.even?
-            if !el.is_a? Integer
-              print " #{el} ".on_yellow
-            else
-              print '   '.on_yellow
-            end
-          else
-            if !el.is_a? Integer
-              print " #{el} ".on_magenta
-            else
-              print '   '.on_magenta
-            end
-          end
+          index.even? ? light_color(el) : dark_color(el)
+        end
+        if idx.odd?
+          index.even? ? dark_color(el) : light_color(el)
         end
       end
       puts ' '
     end
     puts '   a  b  c  d  e  f  g  h'
+  end
+
+  def light_color(element)
+    element.is_a?(Integer) ? (print '   '.on_magenta) : (print " #{element} ".on_magenta)
+  end
+
+  def dark_color(element)
+    element.is_a?(Integer) ? (print '   '.on_yellow) : (print " #{element} ".on_yellow)
   end
 end
 
