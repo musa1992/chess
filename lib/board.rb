@@ -44,21 +44,9 @@ class Board
     element.is_a?(Integer) ? (print '   '.on_yellow) : (print " #{element} ".on_yellow)
   end
 
-  def update_board(current_pos,new_pos)
+  def update_board(current_pos, new_pos)
     board[new_pos.first][new_pos.last] = board[current_pos.first][current_pos.last].to_s
     board[current_pos.first][current_pos.last] = ' '
     board
   end
-
 end
-
-br = Board.new
-
-br.color_board(br.board)
-
-br.update_board([7,7],[0,0])
-puts "///////////////////updates /////////////////"
-br.color_board(br.board)
-
-
-
