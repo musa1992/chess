@@ -48,7 +48,7 @@ class Queen
             y = generate_coords(y) 
         end
         moves.delete_if {|elem| elem.flatten.empty?}
-        moves
+        moves.flatten(1)
     end
     def generate_coords(arr)
         arr.map do |el|
@@ -70,13 +70,27 @@ class Queen
         moves.delete_if {|del| del.any?{|i| i < 0 || i > 7}}
         moves        
     end
+    def move(pos)
+        update_position(pos) if all_possible_moves.any?(pos)
+     end
+ 
+     def update_position(pos)
+         @position = pos
+     end
+    
 end
 
 q = Queen.new(" mo", "mo", [0,7])
-
+k = King.new('m', 'm', [5,7])
 print q.all_possible_moves
-
+puts ' '
+q.move([1,0])
+k.move([6,7])
+print q.position
 puts " "
 
+print k.position
+
+puts ' '
 
 
