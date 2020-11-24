@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'colorize'
 class GamePiece
   attr_reader :color, :unicode, :position
 
@@ -29,6 +28,7 @@ class GamePiece
       end
     end
   end
+
   def all_possible_moves_helper(x_arr, y_arr, n)
     moves = []
     n.times do |i|
@@ -36,9 +36,10 @@ class GamePiece
     end
     correct_moves(moves)
   end
+
   def correct_moves(moves)
     moves.delete_if { |del| del.any? { |i| i.negative? || i > 7 } }
-    moves   
+    moves
   end
 
   def format_array(moves)
@@ -71,8 +72,6 @@ class Queen < GamePiece
     end
     format_array(moves)
   end
-
-  
 end
 
 class Rook < GamePiece
@@ -88,7 +87,6 @@ class Rook < GamePiece
     end
     format_array(moves)
   end
-
 end
 class Bishop < GamePiece
   def all_possible_moves
@@ -103,7 +101,6 @@ class Bishop < GamePiece
     end
     format_array(moves)
   end
-
 end
 
 class Knight < GamePiece
@@ -157,36 +154,3 @@ class Pawn < GamePiece
     correct_moves(moves)
   end
 end
-
-q = Queen.new('mo', 'mo', [4,3])
-
-print q.all_possible_moves
-
-puts " "
-
-q.move([5,3])
-
-print q.all_possible_moves
-
-puts " "
-q.move([0,3])
-
-print q.all_possible_moves
-
-puts " "
-puts " King"
-q = King.new('mo', 'mo', [0,5])
-
-print q.all_possible_moves
-puts " "
-
-q.move([1,5])
-
-print q.all_possible_moves
-
-puts " "
-q.move([2,5])
-
-print q.all_possible_moves
-
-puts " "
