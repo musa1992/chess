@@ -29,6 +29,14 @@ class GamePiece
       end
     end
   end
+  def all_possible_moves_helper(x_arr, y_arr, n)
+    moves = []
+    n.times do |i|
+      moves << [position[0] + x_arr[i], position[1] + y_arr[i]]
+    end
+    moves.delete_if { |del| del.any? { |i| i.negative? || i > 7 } }
+    moves
+  end
 end
 class King < GamePiece
   def all_possible_moves
@@ -47,9 +55,10 @@ class Queen < GamePiece
   def all_possible_moves
     x = [1, -1, 0, 0, -1, 1, -1, 1]
     y = [0, 0, 1, -1, 1, 1, -1, -1]
+    n = 8
     moves = []
     7.times do
-      moves << all_possible_moves_helper(x, y)
+      moves << all_possible_moves_helper(x, y, n)
       x = generate_coords(x)
       y = generate_coords(y)
     end
@@ -57,23 +66,17 @@ class Queen < GamePiece
     moves.flatten(1)
   end
 
-  def all_possible_moves_helper(x_arr, y_arr)
-    moves = []
-    8.times do |i|
-      moves << [position[0] + x_arr[i], position[1] + y_arr[i]]
-    end
-    moves.delete_if { |del| del.any? { |i| i.negative? || i > 7 } }
-    moves
-  end
+  
 end
 
 class Rook < GamePiece
   def all_possible_moves
     x = [1, -1, 0, 0]
     y = [0, 0, 1, -1]
+    n = 4
     moves = []
     7.times do
-      moves << all_possible_moves_helper(x, y)
+      moves << all_possible_moves_helper(x, y, n)
       x = generate_coords(x)
       y = generate_coords(y)
     end
@@ -81,22 +84,15 @@ class Rook < GamePiece
     moves.flatten(1)
   end
 
-  def all_possible_moves_helper(x_arr, y_arr)
-    moves = []
-    4.times do |i|
-      moves << [position[0] + x_arr[i], position[1] + y_arr[i]]
-    end
-    moves.delete_if { |del| del.any? { |i| i.negative? || i > 7 } }
-    moves
-  end
 end
 class Bishop < GamePiece
   def all_possible_moves
     x = [-1, 1, -1, 1]
     y = [1, 1, -1, -1]
+    n = 4
     moves = []
     7.times do
-      moves << all_possible_moves_helper(x, y)
+      moves << all_possible_moves_helper(x, y, n)
       x = generate_coords(x)
       y = generate_coords(y)
     end
@@ -104,14 +100,6 @@ class Bishop < GamePiece
     moves.flatten(1)
   end
 
-  def all_possible_moves_helper(x_arr, y_arr)
-    moves = []
-    4.times do |i|
-      moves << [position[0] + x_arr[i], position[1] + y_arr[i]]
-    end
-    moves.delete_if { |del| del.any? { |i| i.negative? || i > 7 } }
-    moves
-  end
 end
 
 class Knight < GamePiece
@@ -168,3 +156,20 @@ class Pawn < GamePiece
     moves
   end
 end
+
+q = Queen.new('mo', 'mo', [4,3])
+
+print q.all_possible_moves
+
+puts " "
+
+q.move([5,3])
+
+print q.all_possible_moves
+
+puts " "
+q.move([0,3])
+
+print q.all_possible_moves
+
+puts " "
