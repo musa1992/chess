@@ -34,8 +34,11 @@ class GamePiece
     n.times do |i|
       moves << [position[0] + x_arr[i], position[1] + y_arr[i]]
     end
+    correct_moves(moves)
+  end
+  def correct_moves(moves)
     moves.delete_if { |del| del.any? { |i| i.negative? || i > 7 } }
-    moves
+    moves   
   end
 end
 class King < GamePiece
@@ -46,8 +49,7 @@ class King < GamePiece
     4.times do |i|
       moves << [position[0] + x[i], position[1] + y[i]]
     end
-    moves.delete_if { |del| del.any? { |i| i.negative? || i > 7 } }
-    moves
+    correct_moves(moves)
   end
 end
 
@@ -139,8 +141,7 @@ class Pawn < GamePiece
     4.times do |i|
       moves << [position[0] + x[i], position[1] + y[i]]
     end
-    moves.delete_if { |del| del.any? { |i| i.negative? || i > 7 } }
-    moves
+    correct_moves(moves)
   end
 
   def all_possible_moves
@@ -150,10 +151,9 @@ class Pawn < GamePiece
     3.times do |i|
       moves << [position[0] + x[i], position[1] + y[i]]
     end
-    moves.delete_if { |del| del.any? { |i| i.negative? || i > 7 } }
     return first_move if @original_pos == position
 
-    moves
+    correct_moves(moves)
   end
 end
 
@@ -169,6 +169,22 @@ print q.all_possible_moves
 
 puts " "
 q.move([0,3])
+
+print q.all_possible_moves
+
+puts " "
+puts " King"
+q = King.new('mo', 'mo', [0,5])
+
+print q.all_possible_moves
+puts " "
+
+q.move([1,5])
+
+print q.all_possible_moves
+
+puts " "
+q.move([2,5])
 
 print q.all_possible_moves
 
