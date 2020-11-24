@@ -40,6 +40,11 @@ class GamePiece
     moves.delete_if { |del| del.any? { |i| i.negative? || i > 7 } }
     moves   
   end
+
+  def format_array(moves)
+    moves.delete_if { |elem| elem.flatten.empty? }
+    moves.flatten(1)
+  end
 end
 class King < GamePiece
   def all_possible_moves
@@ -64,8 +69,7 @@ class Queen < GamePiece
       x = generate_coords(x)
       y = generate_coords(y)
     end
-    moves.delete_if { |elem| elem.flatten.empty? }
-    moves.flatten(1)
+    format_array(moves)
   end
 
   
@@ -82,8 +86,7 @@ class Rook < GamePiece
       x = generate_coords(x)
       y = generate_coords(y)
     end
-    moves.delete_if { |elem| elem.flatten.empty? }
-    moves.flatten(1)
+    format_array(moves)
   end
 
 end
@@ -98,8 +101,7 @@ class Bishop < GamePiece
       x = generate_coords(x)
       y = generate_coords(y)
     end
-    moves.delete_if { |elem| elem.flatten.empty? }
-    moves.flatten(1)
+    format_array(moves)
   end
 
 end
@@ -112,8 +114,7 @@ class Knight < GamePiece
     8.times do |i|
       moves << [position[0] + x[i], position[1] + y[i]]
     end
-    moves.delete_if { |del| del.any? { |i| i.negative? || i > 7 } }
-    moves
+    format_array(moves)
   end
 end
 
