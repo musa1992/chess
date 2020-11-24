@@ -80,17 +80,6 @@ class Queen
     
 end
 
-q = Queen.new(" mo", "mo", [0,7])
-k = King.new('m', 'm', [5,7])
-print q.all_possible_moves
-puts ' '
-q.move([1,0])
-k.move([6,7])
-print q.position
-puts " "
 
-print k.position
-
-puts ' '
 
 
