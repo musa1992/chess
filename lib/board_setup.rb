@@ -2,6 +2,10 @@ require_relative 'game_piece'
 require_relative 'board'
 
 module Setup
+
+    def board
+        board = Board.new
+    end
     def pieces(row,color)
         arr_1 = ['r','n','b','q','k','b','n','r']
         arr_2 = ['p','p','p','p','p','p','p','p']
@@ -71,12 +75,41 @@ module Setup
             'unkown object'
         end
     end
+
+    def white_pawns
+        pieces(6,'white')
+    end
+    def white_major
+        pieces(7, 'white')
+    end
+    def black_pawns
+        pieces(1,'black')
+    end
+    def black_major
+        pieces(0, 'black')
+    end
 end
 
 
 class BoardSetUp
     include Setup
+    def set_board
+        @board = board
+        playing_board = @board.board
+        my_pieces = [black_major,black_pawns,white_pawns,white_major]
+        rows = [0,1,6,7]
+        
+        4.times do |i|
+            insert_piece(playing_board,my_pieces[i], rows[i])
+        end
+        playing_board
+    end
 
+    def insert_piece(board, array, row)
+        8.times do |i|
+            board[row][i] = array[i]
+        end
+    end
     
 end
 
@@ -84,7 +117,9 @@ end
 
 br = BoardSetUp.new
 
+boa = br.board
 
-print br.pieces(7,'white')
+boa.color_board(br.set_board)
 
-puts ' '
+
+
