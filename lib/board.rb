@@ -37,15 +37,15 @@ class Board
   end
 
   def light_color(element)
-    element.is_a?(Integer) ? (print '   '.on_magenta) : (print " #{element} ".on_magenta)
+    element.is_a?(Integer) ? (print '   '.on_light_blue) : (print " #{element.unicode} ".on_light_blue)
   end
 
   def dark_color(element)
-    element.is_a?(Integer) ? (print '   '.on_yellow) : (print " #{element} ".on_yellow)
+    element.is_a?(Integer) ? (print '   '.on_red) : (print " #{element.unicode} ".on_red)
   end
 
   def update_board(current_pos, new_pos)
-    board[new_pos.first][new_pos.last] = board[current_pos.first][current_pos.last].to_s
+    board[new_pos.first][new_pos.last] = board[current_pos.first][current_pos.last].to_s # remove to_s was used in testing only
     board[current_pos.first][current_pos.last] = ' '
     board
   end
