@@ -44,9 +44,9 @@ class Board
     element.is_a?(Integer) ? (print '   '.on_red) : (print " #{element.unicode} ".on_red)
   end
 
-  def update_board(current_pos, new_pos)
-    board[new_pos.first][new_pos.last] = board[current_pos.first][current_pos.last].to_s # remove to_s was used in testing only
-    board[current_pos.first][current_pos.last] = ' '
-    board
+  def update_board(current_pos, new_pos, game_board)
+    game_board[new_pos.first][new_pos.last] = game_board[current_pos.first][current_pos.last] # remove to_s was used in testing only
+    game_board[current_pos.first][current_pos.last] = 1
+    game_board
   end
 end
