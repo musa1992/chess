@@ -93,6 +93,10 @@ end
 
 class BoardSetUp
     include Setup
+    attr_accessor :full_board
+    def initialize
+        @full_board = set_board
+    end
     def set_board
         @board = board
         playing_board = @board.board
@@ -114,12 +118,6 @@ class BoardSetUp
 end
 
 
-
-br = BoardSetUp.new
-
-boa = br.board
-
-boa.color_board(br.set_board)
 
 
 
