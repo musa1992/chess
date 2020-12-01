@@ -9,8 +9,12 @@ class GamePiece
     @position = position
   end
 
-  def move(pos)
-    update_position(pos) if all_possible_moves.any?(pos)
+  def is_correct_move?(pos)
+    if all_possible_moves.any?(pos)
+      update_position(pos) 
+      return true
+    end
+    false
   end
 
   def update_position(pos)
@@ -45,6 +49,67 @@ class GamePiece
   def format_array(moves)
     moves.delete_if { |elem| elem.flatten.empty? }
     moves.flatten(1)
+  end
+  
+  def create_path(current_pos, new_pos)
+    
+    case current_pos.first
+    
+    when (current_pos[0] < new_pos[0]) # up
+      
+      x = -1
+      y = 0
+      generate_path(x, y, current_pos,new_pos)
+    when current_pos.first > new_pos.first # down
+      
+      x = 1
+      y = 0
+      generate_path(x, y, current_pos,new_pos)
+    when current_pos.last < new_pos.last # right
+      
+      x = 0
+      y = 1
+      generate_path(x, y, current_pos,new_pos)
+    when current_pos.last > new_pos.last # left
+      
+      x = 0
+      y = -1
+      generate_path(x, y, current_pos,new_pos)
+    when current_pos.first > new_pos.first && current_pos.last < new_pos.last # up-right
+      
+      x = -1
+      y = 1
+      generate_path(x, y, current_pos,new_pos)
+    when current_pos.first > new_pos.first && current_pos.last > new_pos.last # up - left
+      
+      x = -1
+      y = -1
+      generate_path(x, y, current_pos,new_pos)
+    when current_pos.first < new_pos.first && current_pos.last < new_pos.last # down_right
+      x = 1
+      y = 1
+      generate_path(x, y, current_pos,new_pos)
+    when current_pos.first < new_pos.first && current_pos.last > new_pos.last # down_left
+      x = 1
+      y = -1
+      generate_path(x, y, current_pos,new_pos)
+    else
+      x = 1
+      y = 0
+      generate_path(x, y, current_pos,new_pos)
+    end
+  end
+
+  def generate_path(x, y, current_pos, new_pos)
+    path = []
+    pos = []
+      until current_pos.first == new_pos.first && current_pos.last == new_pos.last
+        current_pos[0] = current_pos.first + x
+        current_pos[1] = current_pos.last +  y
+        pos = [current_pos.first, current_pos.last]
+        path << pos
+      end
+      path
   end
 end
 class King < GamePiece
@@ -154,3 +219,9 @@ class Pawn < GamePiece
     correct_moves(moves)
   end
 end
+
+r = Queen.new("m", 'r' ,[0,0])
+
+print r.create_path([0,0], [6,0])
+
+puts " "
