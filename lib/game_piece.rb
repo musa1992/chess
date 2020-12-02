@@ -216,12 +216,4 @@ class Pawn < GamePiece
   end
 end
 
-r = Queen.new('m', 'r', [0, 0])
 
-print r.create_path([4, 3], [2, 5])
-
-puts ' '
-puts "//////////////////"
-#print r.generate_path(1,1,[3,3], [6,6])
-
-puts ' '
