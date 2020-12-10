@@ -33,12 +33,8 @@ class GamePiece
     end
   end
 
-  def check_mate(pos)
-    if all_possible_moves.any? (pos)
-      puts "check mate"
-    else
-      puts "no check"
-    end
+  def check_mate?(pos)
+    all_possible_moves.any?(pos)
   end
 
   def all_possible_moves_helper(x_arr, y_arr, n)
@@ -113,7 +109,7 @@ class GamePiece
       pos = [current_pos.first, current_pos.last]
       path << pos
     end
-    path
+    path.take path.length - 1
   end
 end
 class King < GamePiece
@@ -224,9 +220,9 @@ class Pawn < GamePiece
   end
 end
 
-kn  = Knight.new('black', 'bl', [0,1])
+# kn  = Knight.new('black', 'bl', [0,1])
 
-kn.check_mate([2,0])
+# kn.check_mate([2,0])
 
 
 # puts " "
