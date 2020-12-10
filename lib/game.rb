@@ -35,10 +35,14 @@ class Game
 
     def play
        x = 0
-
+        white_king = @playing_board[7][4]
+        black_king = @playing_board[0][4]
+        kings =  [black_king, white_king]
        loop do
+            # when x = zero current player is black 
             player = x.zero? ? players.first : players.last
-            
+            # when x = zero king up for checkma te is white king
+            king = x.zero? ? kings.last : kings.first
            board.board.color_board(@playing_board)
            puts "#{player.name} make your move"
            input = gets
@@ -108,9 +112,14 @@ class Game
                 @x_square = chosen_square(valid_input)[:x_square]
                 @y_square = chosen_square(valid_input)[:y_square]
                 retry 
-            # rescue TypeError => e
-            #     puts e.message
             end
+            
+            if @playing_board[x_square][y_square].check_mate?(king.position)
+                king_path = @playing_board[x_square][y_square].create_path([x_square,y_square], king.position)
+                
+                puts "check" if legal_play(@playing_board, king_path)
+            end
+
             
            x += 1
            x = 0 if x == 2
