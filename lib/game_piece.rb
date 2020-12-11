@@ -33,6 +33,14 @@ class GamePiece
     end
   end
 
+  def check_mate(pos)
+    if all_possible_moves.any? (pos)
+      puts "check mate"
+    else
+      puts "no check"
+    end
+  end
+
   def all_possible_moves_helper(x_arr, y_arr, n)
     moves = []
     n.times do |i|
@@ -172,7 +180,7 @@ class Knight < GamePiece
     8.times do |i|
       moves << [position[0] + x[i], position[1] + y[i]]
     end
-    format_array(moves)
+    correct_moves(moves)
   end
 end
 
@@ -215,5 +223,19 @@ class Pawn < GamePiece
     correct_moves(moves)
   end
 end
+
+kn  = Knight.new('black', 'bl', [0,1])
+
+kn.check_mate([2,0])
+
+
+# puts " "
+# puts "BISHOP"
+# bs  = Bishop.new('black', 'bs', [0,2])
+
+# print bs.all_possible_moves
+
+# puts " "
+
 
 
