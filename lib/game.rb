@@ -11,6 +11,11 @@ module Error
             "Incorrect move for the piece"
         end
     end
+    class WrongMoveError < StandardError
+        def message
+            "Piece can not be put on square with your piece already"
+        end
+    end
 
 end
 class Game
@@ -42,9 +47,30 @@ class Game
            @y_piece = playing_piece(valid_input)[:y_pos]
            @x_square = chosen_square(valid_input)[:x_square]
            @y_square = chosen_square(valid_input)[:y_square]
+        #     puts "new sq x is #{@x_square}"
+        #     puts "new sq y is #{@y_square}"
+
+        #     puts " "
+        #     puts "chosen piece x is #{@x_piece}"
+        #     puts "chosen piece y is #{@y_piece}"
+        #    if @playing_board[x_piece][y_piece].is_correct_move?([x_square,y_square])
+        #     puts "correct"
+        #   else
+        #    puts 'incorrect'
+        #   end
+        
+        #    @playing_board = board.board.update_board([x_piece,y_piece],[x_square,y_square],@playing_board)
+
+           
+
             begin             
                 raise Error::WrongPieceError if player.color != @playing_board[x_piece][y_piece].color
                 raise Error::IncorrectMoveError if !@playing_board[x_piece][y_piece].is_correct_move?([x_square,y_square])
+                path = @playing_board[x_piece][y_piece].create_path([x_piece,y_piece],[x_square,y_square])
+                raise Error::IncorrectMoveError unless legal_play(@playing_board,path)
+                if @playing_board[x_square][y_square].kind_of? GamePiece
+                    raise Error::WrongMoveError if @playing_board[x_piece][y_piece].color == @playing_board[x_square][y_square].color
+                end
                 @playing_board = board.board.update_board([x_piece,y_piece],[x_square,y_square],@playing_board)
             rescue WrongPieceError => e
                 puts e.message
@@ -55,6 +81,15 @@ class Game
                 @x_square = chosen_square(valid_input)[:x_square]
                 @y_square = chosen_square(valid_input)[:y_square]
                 retry
+            rescue WrongMoveError => e
+                puts e.message
+                input = gets
+                @valid_input = validate_input(input)
+                @x_piece = playing_piece(valid_input)[:x_pos]
+                @y_piece = playing_piece(valid_input)[:y_pos]
+                @x_square = chosen_square(valid_input)[:x_square]
+                @y_square = chosen_square(valid_input)[:y_square]
+                retry           
             rescue IncorrectMoveError => e
                 puts e.message
                 input = gets
@@ -72,14 +107,17 @@ class Game
                 @y_piece = playing_piece(valid_input)[:y_pos]
                 @x_square = chosen_square(valid_input)[:x_square]
                 @y_square = chosen_square(valid_input)[:y_square]
-                retry                
+                retry 
+            # rescue TypeError => e
+            #     puts e.message
             end
-           
-           
+            
            x += 1
            x = 0 if x == 2
        end
     end
+
+
     def validate_input(user_input)
        pattern = /^[1-8]{1}[a-h]{1}\s[1-8]{1}[a-h]{1}$/
        until user_input.match?(pattern)
@@ -90,40 +128,48 @@ class Game
     end
 
     def playing_piece(user_input)
-        x_piece = user_input[/^./].to_i - 1
-        y_piece = (user_input[1].ord - 96) - 1
+        x_piece = user_input[/^./].to_i-1 
+        y_piece = (user_input[1].ord - 96)-1
         {:x_pos => x_piece, :y_pos => y_piece}
     end
 
     def chosen_square(user_input)
         x_square = user_input[3].to_i - 1
-        y_square = (user_input[/.$/].ord - 96) - 1 
-        {:x_square => x_square, :y_square => y_piece}
+        y_square = (user_input[4].ord - 96) - 1
+        {:x_square => x_square, :y_square => y_square}
     end
 
-    def is_empty_square(playing_board,x_pos,y_pos)
-        input = nil
-        while playing_board[x_pos][y_pos].kind_of? Integer
-            puts "You picked an empty square"
-            input = gets
-            input = validate_input(input)
-            x_pos = playing_piece(input)[:x_pos]
-            y_pos = playing_piece(input)[:y_pos]
+    def legal_play(playing_board, path)
+        pieces = []
+        path.each do |arr|
+            pieces << playing_board[arr.first][arr.last]
         end
-        input
+        pieces.all? Integer
     end
 
-    def correct_piece(player, playing_board,x,y) 
-        input = nil
-        until player.color == playing_board[x][y].color
-                puts "You picked opponents piece Enter choice again"
-                input = gets
-                input = validate_input(input)
-                x = playing_piece(input)[:x_pos]
-                y = playing_piece(input)[:y_pos]             
-        end
-        input
-    end
+    # def is_empty_square(playing_board,x_pos,y_pos)
+    #     input = nil
+    #     while playing_board[x_pos][y_pos].kind_of? Integer
+    #         puts "You picked an empty square"
+    #         input = gets
+    #         input = validate_input(input)
+    #         x_pos = playing_piece(input)[:x_pos]
+    #         y_pos = playing_piece(input)[:y_pos]
+    #     end
+    #     input
+    # end
+
+    # def correct_piece(player, playing_board,x,y) 
+    #     input = nil
+    #     until player.color == playing_board[x][y].color
+    #             puts "You picked opponents piece Enter choice again"
+    #             input = gets
+    #             input = validate_input(input)
+    #             x = playing_piece(input)[:x_pos]
+    #             y = playing_piece(input)[:y_pos]             
+    #     end
+    #     input
+    # end
     
 end
 
