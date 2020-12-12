@@ -38,12 +38,17 @@ class Game
         white_king = @playing_board[7][4]
         black_king = @playing_board[0][4]
         kings =  [black_king, white_king]
+        captured_black = []
+        captured_white = []
        loop do
             # when x = zero current player is black 
             player = x.zero? ? players.first : players.last
-            # when x = zero king up for checkma te is white king
+            # when x = zero king up for checkmate is white king
             king = x.zero? ? kings.last : kings.first
+
+           captured_pieces(captured_white)
            board.board.color_board(@playing_board)
+           captured_pieces(captured_black)
            puts "#{player.name} make your move"
            input = gets
            @valid_input = validate_input(input)
@@ -74,7 +79,15 @@ class Game
                 raise Error::IncorrectMoveError unless legal_play(@playing_board,path)
                 if @playing_board[x_square][y_square].kind_of? GamePiece
                     raise Error::WrongMoveError if @playing_board[x_piece][y_piece].color == @playing_board[x_square][y_square].color
+
+                    if @playing_board[x_square][y_square].color == 'black'
+                        captured_black << @playing_board[x_square][y_square].unicode.encode('utf-8')
+                    else
+                        captured_white << @playing_board[x_square][y_square].unicode.encode('utf-8')
+                    end
+                    
                 end
+                
                 @playing_board = board.board.update_board([x_piece,y_piece],[x_square,y_square],@playing_board)
             rescue WrongPieceError => e
                 puts e.message
@@ -154,6 +167,12 @@ class Game
             pieces << playing_board[arr.first][arr.last]
         end
         pieces.all? Integer
+    end
+
+    def captured_pieces(pieces)
+        puts " "
+        pieces.each {|piece| print " #{piece} ".on_yellow}
+        puts " "
     end
 
     # def is_empty_square(playing_board,x_pos,y_pos)
