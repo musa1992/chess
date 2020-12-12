@@ -21,6 +21,7 @@ class Board
   end
 
   def color_board(board)
+    puts '   a  b  c  d  e  f  g  h'
     board.each_with_index do |row, idx|
       print "#{idx + 1} "
       row.each_with_index do |el, index|
@@ -31,6 +32,7 @@ class Board
           index.even? ? dark_color(el) : light_color(el)
         end
       end
+      print " #{idx + 1}"
       puts ' '
     end
     puts '   a  b  c  d  e  f  g  h'
