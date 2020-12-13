@@ -1,23 +1,21 @@
 # frozen_string_literal: true
 
 class GamePiece
-  attr_reader :color, :unicode, :position
-
+  attr_reader :color, :unicode, :position, :prev_pos
+  
   def initialize(color, unicode, position)
     @color = color
     @unicode = unicode
     @position = position
+    @prev_pos = position
   end
 
   def is_correct_move?(pos)
-    if all_possible_moves.any?(pos)
-      update_position(pos)
-      return true
-    end
-    false
+    all_possible_moves.any?(pos)
   end
 
   def update_position(pos)
+    @prev_pos = position
     @position = pos
   end
 
@@ -89,7 +87,7 @@ class GamePiece
       y = 1
       generate_path(x, y, current_pos, new_pos)
     elsif current_pos.first < new_pos.first && current_pos.last > new_pos.last # down_left
-      puts "down- left"
+  
       x = 1
       y = -1
       generate_path(x, y, current_pos, new_pos)
@@ -187,9 +185,9 @@ class Pawn < GamePiece
     @original_pos = position
     @shift = shift_factor
   end
-
-  def shift_factor
-    if @original_pos.first == 6
+  #ensures the pawn can only move forward
+  def shift_factor 
+    if @original_pos.first == 6 # the 6 is the original x- coord for the pawns @row 7 at start of game on the board
       -1
     else
       1
@@ -217,6 +215,10 @@ class Pawn < GamePiece
     return first_move if @original_pos == position
 
     correct_moves(moves)
+  end
+  def capturing_move(y_pos)
+    x = (prev_pos.last - y_pos).abs
+    x.positive?
   end
 end
 
