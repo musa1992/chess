@@ -75,11 +75,13 @@ class Game
             begin             
                 raise Error::WrongPieceError if player.color != @playing_board[x_piece][y_piece].color
                 raise Error::IncorrectMoveError if !@playing_board[x_piece][y_piece].is_correct_move?([x_square,y_square])
-                path = @playing_board[x_piece][y_piece].create_path([x_piece,y_piece],[x_square,y_square])
-                raise Error::IncorrectMoveError unless legal_play(@playing_board,path)
+                unless @playing_board[x_piece][y_piece].is_a? Knight
+                    path = @playing_board[x_piece][y_piece].create_path([x_piece,y_piece],[x_square,y_square])
+                    raise Error::IncorrectMoveError unless legal_play(@playing_board,path)                    
+                end
                 if @playing_board[x_square][y_square].kind_of? GamePiece
                     raise Error::WrongMoveError if @playing_board[x_piece][y_piece].color == @playing_board[x_square][y_square].color
-
+                    # convert if else to method -- captured(color)
                     if @playing_board[x_square][y_square].color == 'black'
                         captured_black << @playing_board[x_square][y_square].unicode.encode('utf-8')
                     else
