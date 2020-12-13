@@ -18,7 +18,7 @@ module Error
     end
 
 end
-#consider adding game controller class - responsible for all the rules of the game
+
 class Game
     include Error
     attr_reader :board, :players
@@ -57,22 +57,7 @@ class Game
            @y_piece = playing_piece(valid_input)[:y_pos]
            @x_square = chosen_square(valid_input)[:x_square]
            @y_square = chosen_square(valid_input)[:y_square]
-        #     puts "new sq x is #{@x_square}"
-        #     puts "new sq y is #{@y_square}"
-
-        #     puts " "
-        #     puts "chosen piece x is #{@x_piece}"
-        #     puts "chosen piece y is #{@y_piece}"
-        #    if @playing_board[x_piece][y_piece].is_correct_move?([x_square,y_square])
-        #     puts "correct"
-        #   else
-        #    puts 'incorrect'
-        #   end
-        
-        #    @playing_board = board.board.update_board([x_piece,y_piece],[x_square,y_square],@playing_board)
-
-           
-
+       
             begin 
           
                 raise Error::WrongPieceError if player.color != @playing_board[x_piece][y_piece].color
@@ -183,31 +168,6 @@ class Game
         pieces.each {|piece| print " #{piece} ".on_yellow}
         puts " "
     end
-
-    # def is_empty_square(playing_board,x_pos,y_pos)
-    #     input = nil
-    #     while playing_board[x_pos][y_pos].kind_of? Integer
-    #         puts "You picked an empty square"
-    #         input = gets
-    #         input = validate_input(input)
-    #         x_pos = playing_piece(input)[:x_pos]
-    #         y_pos = playing_piece(input)[:y_pos]
-    #     end
-    #     input
-    # end
-
-    # def correct_piece(player, playing_board,x,y) 
-    #     input = nil
-    #     until player.color == playing_board[x][y].color
-    #             puts "You picked opponents piece Enter choice again"
-    #             input = gets
-    #             input = validate_input(input)
-    #             x = playing_piece(input)[:x_pos]
-    #             y = playing_piece(input)[:y_pos]             
-    #     end
-    #     input
-    # end
-    
 end
 
 board = BoardSetUp.new
@@ -220,38 +180,3 @@ players = [pl1, pl2]
 g = Game.new(board,players)
 
 g.play
-
-# def retrying(a, b)
-   
-#     c = 0
-#     begin
-#       c = a + b  
-        
-#     rescue => exception
-#         puts "enter a:"
-#         a = gets.chomp.to_i
-#         puts "enter b:"
-#         b = gets.chomp.to_i
-#         retry
-#     end
-#     #print "a #{a} , b #{b}\n"
-#     c
-# end
-
-# puts retrying(100, '200')
-
-
-# if @playing_board[x_piece][y_piece].kind_of? Integer
-#     @valid_input = is_empty_square(@playing_board,x_piece,y_piece)
-# end
-
-# x = playing_piece(valid_input)[:x_pos]
-# y = playing_piece(valid_input)[:y_pos]
-# if player.color != @playing_board[x][y].color
-#     @valid_input = correct_piece(player, @playing_board,x,y)
-# end
-
-# @x_square = chosen_square(valid_input)[:x_square]
-# @y_square = chosen_square(valid_input)[:y_square]
-# @x_piece = playing_piece(valid_input)[:x_pos]
-# @y_piece = playing_piece(valid_input)[:y_pos]
