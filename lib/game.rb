@@ -18,6 +18,7 @@ module Error
     end
 
 end
+#consider adding game controller class - responsible for all the rules of the game
 class Game
     include Error
     attr_reader :board, :players
@@ -72,9 +73,15 @@ class Game
 
            
 
-            begin             
+            begin 
+          
                 raise Error::WrongPieceError if player.color != @playing_board[x_piece][y_piece].color
                 raise Error::IncorrectMoveError if !@playing_board[x_piece][y_piece].is_correct_move?([x_square,y_square])
+                if @playing_board[x_piece][y_piece].is_a? Pawn
+                    raise Error::IncorrectMoveError if @playing_board[x_piece][y_piece].capturing_move(y_square) && @playing_board[x_square][y_square].is_a?(Integer)
+
+                    raise Error::IncorrectMoveError if !@playing_board[x_piece][y_piece].capturing_move(y_square) && @playing_board[x_square][y_square].is_a?(GamePiece)
+                end
                 unless @playing_board[x_piece][y_piece].is_a? Knight
                     path = @playing_board[x_piece][y_piece].create_path([x_piece,y_piece],[x_square,y_square])
                     raise Error::IncorrectMoveError unless legal_play(@playing_board,path)                    
@@ -89,7 +96,7 @@ class Game
                     end
                     
                 end
-                
+                @playing_board[x_piece][y_piece].update_position([x_square,y_square])
                 @playing_board = board.board.update_board([x_piece,y_piece],[x_square,y_square],@playing_board)
             rescue WrongPieceError => e
                 puts e.message
