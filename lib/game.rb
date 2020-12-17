@@ -42,6 +42,7 @@ class Game
         captured_black = []
         captured_white = []
        loop do
+        
             # when x = zero current player is black 
             player = x.zero? ? players.first : players.last
             # when x = zero king up for checkmate is white king
@@ -53,19 +54,21 @@ class Game
            puts "#{player.name} make your move"
            input = gets
            @valid_input = validate_input(input)
+           
            @x_piece = playing_piece(valid_input)[:x_pos]
            @y_piece = playing_piece(valid_input)[:y_pos]
            @x_square = chosen_square(valid_input)[:x_square]
            @y_square = chosen_square(valid_input)[:y_square]
-       
+           
             begin 
-          
                 raise Error::WrongPieceError if player.color != @playing_board[x_piece][y_piece].color
                 raise Error::IncorrectMoveError if !@playing_board[x_piece][y_piece].is_correct_move?([x_square,y_square])
                 if @playing_board[x_piece][y_piece].is_a? Pawn
+                    
                     raise Error::IncorrectMoveError if @playing_board[x_piece][y_piece].capturing_move(y_square) && @playing_board[x_square][y_square].is_a?(Integer)
 
                     raise Error::IncorrectMoveError if !@playing_board[x_piece][y_piece].capturing_move(y_square) && @playing_board[x_square][y_square].is_a?(GamePiece)
+                    
                 end
                 unless @playing_board[x_piece][y_piece].is_a? Knight
                     path = @playing_board[x_piece][y_piece].create_path([x_piece,y_piece],[x_square,y_square])
@@ -81,8 +84,19 @@ class Game
                     end
                     
                 end
+                
+                
                 @playing_board[x_piece][y_piece].update_position([x_square,y_square])
+                
                 @playing_board = board.board.update_board([x_piece,y_piece],[x_square,y_square],@playing_board)
+                if promote_pawn(@playing_board[x_square][y_square])
+                    puts "Enter choice to promote your game piece"
+                    puts "q. Queen \nk. Knight \nr. Rook \nb. Bishop "
+                    letter = gets.chomp
+                    promoted = board.create_piece(letter,[x_square,y_square],player.color)
+                    @playing_board[x_square][y_square] = promoted
+                end
+                
             rescue WrongPieceError => e
                 puts e.message
                 input = gets
@@ -126,7 +140,6 @@ class Game
                 
                 puts "check" if legal_play(@playing_board, king_path)
             end
-
             
            x += 1
            x = 0 if x == 2
@@ -136,7 +149,7 @@ class Game
 
     def validate_input(user_input)
        pattern = /^[1-8]{1}[a-h]{1}\s[1-8]{1}[a-h]{1}$/
-       until user_input.match?(pattern)
+       until user_input.match?(pattern) || user_input.match?("undo")
         puts "Wrong Inputs Enter again in format 2a 2b "
         user_input = gets
        end
@@ -168,6 +181,15 @@ class Game
         pieces.each {|piece| print " #{piece} ".on_yellow}
         puts " "
     end
+    
+    def promote_pawn(piece)
+        x = piece.position.first
+        if piece.kind_of?(Pawn) && (x == 0 || x == 7)
+            return true
+        end
+        false
+    end
+
 end
 
 board = BoardSetUp.new
