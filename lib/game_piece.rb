@@ -15,10 +15,9 @@ class GamePiece
   end
 
   def update_position(pos)
-    @prev_pos = position
-    @position = pos
+    @position = pos     
   end
-
+  
   def generate_coords(arr)
     arr.map do |el|
       if el.positive?
@@ -217,7 +216,7 @@ class Pawn < GamePiece
     correct_moves(moves)
   end
   def capturing_move(y_pos)
-    x = (prev_pos.last - y_pos).abs
+    x = (position.last - y_pos).abs
     x.positive?
   end
 end
