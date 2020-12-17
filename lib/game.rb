@@ -194,8 +194,8 @@ end
 
 board = BoardSetUp.new
 
-pl1 = Player.new('moses', 'black')
-pl2 = Player.new('sheila' , 'white')
+pl1 = Player.new('player one', 'black')
+pl2 = Player.new('player two' , 'white')
 
 players = [pl1, pl2]
 

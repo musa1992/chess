@@ -221,18 +221,6 @@ class Pawn < GamePiece
   end
 end
 
-# kn  = Knight.new('black', 'bl', [0,1])
-
-# kn.check_mate([2,0])
-
-
-# puts " "
-# puts "BISHOP"
-# bs  = Bishop.new('black', 'bs', [0,2])
-
-# print bs.all_possible_moves
-
-# puts " "
 
 
 
