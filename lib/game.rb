@@ -121,12 +121,6 @@ class Game
         retry
       end
 
-      # if my_piece.check_mate?(king.position)
-      #     king_path = new_square.create_path([x_square,y_square], king.position)
-
-      #     puts "check" if legal_play(@playing_board, king_path)
-      # end
-
       x += 1
       x = 0 if x == 2
     end
