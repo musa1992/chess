@@ -6,6 +6,12 @@ module Error
             "You Picked opponents piece"
         end
     end
+    class EmptySquareError < StandardError
+        def message
+            "You picked an empty square"
+        end
+    end
+
     class IncorrectMoveError < StandardError
         def message
             "Incorrect move for the piece"
@@ -22,11 +28,12 @@ end
 class Game
     include Error
     attr_reader :board, :players
-    attr_reader :x_piece, :y_piece, :x_square, :y_square, :valid_input, :my_piece
-   
+    attr_reader :x_piece, :y_piece, :x_square, :y_square, :valid_input, :my_piece, :current_player, :new_square
+    
     def initialize (board, players)
         @board = board
         @players = players
+        @current_player = nil
         @playing_board = board.set_board
         @x_piece = nil
         @y_piece = nil
@@ -34,6 +41,7 @@ class Game
         @y_square = nil
         @valid_input = nil
         @my_piece = nil
+        @new_square = nil
     end
 
     def play
@@ -46,14 +54,15 @@ class Game
        loop do
         
             # when x = zero current player is black 
-            player = x.zero? ? players.first : players.last
+            pl = x.zero? ? players.first : players.last
+            player(pl)
             # when x = zero king up for checkmate is white king
             king = x.zero? ? kings.last : kings.first
 
            captured_pieces(captured_white)
            board.board.color_board(@playing_board)
            captured_pieces(captured_black)
-           puts "#{player.name} make your move"
+           puts "#{current_player.name} make your move"
            input = gets
            @valid_input = validate_input(input)
            
@@ -62,29 +71,29 @@ class Game
            @x_square = chosen_square(valid_input)[:x_square]
            @y_square = chosen_square(valid_input)[:y_square]
 
-           get_piece(x_piece,y_piece)
-           
             begin 
-                raise Error::WrongPieceError if player.color != my_piece.color
+                get_piece(x_piece,y_piece)
+                move_to(x_square,y_square)
+                #raise Error::WrongPieceError if player.color != my_piece.color
                 raise Error::IncorrectMoveError if !my_piece.is_correct_move?([x_square,y_square])
                 if my_piece.is_a? Pawn
                     
-                    raise Error::IncorrectMoveError if my_piece.capturing_move(y_square) && @playing_board[x_square][y_square].is_a?(Integer)
+                    raise Error::IncorrectMoveError if my_piece.capturing_move(y_square) && new_square.is_a?(Integer)
 
-                    raise Error::IncorrectMoveError if !my_piece.capturing_move(y_square) && @playing_board[x_square][y_square].is_a?(GamePiece)
+                    raise Error::IncorrectMoveError if !my_piece.capturing_move(y_square) && new_square.is_a?(GamePiece)
                     
                 end
                 unless my_piece.is_a? Knight
                     path = my_piece.create_path([x_piece,y_piece],[x_square,y_square])
                     raise Error::IncorrectMoveError unless legal_play(@playing_board,path)                    
                 end
-                if @playing_board[x_square][y_square].kind_of? GamePiece
-                    raise Error::WrongMoveError if my_piece.color == @playing_board[x_square][y_square].color
+                if new_square.kind_of? GamePiece
+                    raise Error::WrongMoveError if my_piece.color == new_square.color
                     # convert if else to method -- captured(color)
-                    if @playing_board[x_square][y_square].color == 'black'
-                        captured_black << @playing_board[x_square][y_square].unicode.encode('utf-8')
+                    if new_square.color == 'black'
+                        captured_black << new_square.unicode.encode('utf-8')
                     else
-                        captured_white << @playing_board[x_square][y_square].unicode.encode('utf-8')
+                        captured_white << new_square.unicode.encode('utf-8')
                     end
                     
                 end
@@ -101,7 +110,7 @@ class Game
                     @playing_board[x_square][y_square] = promoted
                 end
                 
-            rescue WrongPieceError => e
+            rescue WrongPieceError, WrongMoveError, IncorrectMoveError, EmptySquareError => e
                 puts e.message
                 input = gets
                 @valid_input = validate_input(input)
@@ -109,42 +118,11 @@ class Game
                 @y_piece = playing_piece(valid_input)[:y_pos]
                 @x_square = chosen_square(valid_input)[:x_square]
                 @y_square = chosen_square(valid_input)[:y_square]
-                get_piece(x_piece,y_piece)
-                retry
-            rescue WrongMoveError => e
-                puts e.message
-                input = gets
-                @valid_input = validate_input(input)
-                @x_piece = playing_piece(valid_input)[:x_pos]
-                @y_piece = playing_piece(valid_input)[:y_pos]
-                @x_square = chosen_square(valid_input)[:x_square]
-                @y_square = chosen_square(valid_input)[:y_square]
-                get_piece(x_piece,y_piece)
-                retry           
-            rescue IncorrectMoveError => e
-                puts e.message
-                input = gets
-                @valid_input = validate_input(input)
-                @x_piece = playing_piece(valid_input)[:x_pos]
-                @y_piece = playing_piece(valid_input)[:y_pos]
-                @x_square = chosen_square(valid_input)[:x_square]
-                @y_square = chosen_square(valid_input)[:y_square]
-                get_piece(x_piece,y_piece)
-                retry                
-            rescue NoMethodError => e
-                puts "You Picked an empty square"
-                input = gets
-                @valid_input = validate_input(input)
-                @x_piece = playing_piece(valid_input)[:x_pos]
-                @y_piece = playing_piece(valid_input)[:y_pos]
-                @x_square = chosen_square(valid_input)[:x_square]
-                @y_square = chosen_square(valid_input)[:y_square]
-                get_piece(x_piece,y_piece)
-                retry 
+                retry             
             end
             
-            if @playing_board[x_square][y_square].check_mate?(king.position)
-                king_path = @playing_board[x_square][y_square].create_path([x_square,y_square], king.position)
+            if my_piece.check_mate?(king.position)
+                king_path = new_square.create_path([x_square,y_square], king.position)
                 
                 puts "check" if legal_play(@playing_board, king_path)
             end
@@ -165,7 +143,17 @@ class Game
     end
 
     def get_piece(x_coord, y_coord)
-        @my_piece = @playing_board[x_coord][y_coord]
+        piece = @playing_board[x_coord][y_coord]
+        raise EmptySquareError if piece.is_a?(Integer)
+        raise WrongPieceError if piece.color != current_player.color
+
+        @my_piece = piece
+    end
+    def move_to(x_coord,y_coord)
+        @new_square = @playing_board[x_coord][y_coord]
+    end
+    def player(pl)
+        @current_player = pl
     end
 
     def playing_piece(user_input)
@@ -196,7 +184,7 @@ class Game
     
     def promote_pawn(piece)
         x = piece.position.first
-        if piece.kind_of?(Pawn) && (x == 0 || x == 7)
+        if piece.is_a?(Pawn) && (x == 0 || x == 7)
             return true
         end
         false
