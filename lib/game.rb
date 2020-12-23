@@ -22,7 +22,8 @@ end
 class Game
     include Error
     attr_reader :board, :players
-    attr_reader :x_piece, :y_piece, :x_square, :y_square, :valid_input
+    attr_reader :x_piece, :y_piece, :x_square, :y_square, :valid_input, :my_piece
+   
     def initialize (board, players)
         @board = board
         @players = players
@@ -32,6 +33,7 @@ class Game
         @x_square = nil
         @y_square = nil
         @valid_input = nil
+        @my_piece = nil
     end
 
     def play
@@ -59,23 +61,25 @@ class Game
            @y_piece = playing_piece(valid_input)[:y_pos]
            @x_square = chosen_square(valid_input)[:x_square]
            @y_square = chosen_square(valid_input)[:y_square]
+
+           get_piece(x_piece,y_piece)
            
             begin 
-                raise Error::WrongPieceError if player.color != @playing_board[x_piece][y_piece].color
-                raise Error::IncorrectMoveError if !@playing_board[x_piece][y_piece].is_correct_move?([x_square,y_square])
-                if @playing_board[x_piece][y_piece].is_a? Pawn
+                raise Error::WrongPieceError if player.color != my_piece.color
+                raise Error::IncorrectMoveError if !my_piece.is_correct_move?([x_square,y_square])
+                if my_piece.is_a? Pawn
                     
-                    raise Error::IncorrectMoveError if @playing_board[x_piece][y_piece].capturing_move(y_square) && @playing_board[x_square][y_square].is_a?(Integer)
+                    raise Error::IncorrectMoveError if my_piece.capturing_move(y_square) && @playing_board[x_square][y_square].is_a?(Integer)
 
-                    raise Error::IncorrectMoveError if !@playing_board[x_piece][y_piece].capturing_move(y_square) && @playing_board[x_square][y_square].is_a?(GamePiece)
+                    raise Error::IncorrectMoveError if !my_piece.capturing_move(y_square) && @playing_board[x_square][y_square].is_a?(GamePiece)
                     
                 end
-                unless @playing_board[x_piece][y_piece].is_a? Knight
-                    path = @playing_board[x_piece][y_piece].create_path([x_piece,y_piece],[x_square,y_square])
+                unless my_piece.is_a? Knight
+                    path = my_piece.create_path([x_piece,y_piece],[x_square,y_square])
                     raise Error::IncorrectMoveError unless legal_play(@playing_board,path)                    
                 end
                 if @playing_board[x_square][y_square].kind_of? GamePiece
-                    raise Error::WrongMoveError if @playing_board[x_piece][y_piece].color == @playing_board[x_square][y_square].color
+                    raise Error::WrongMoveError if my_piece.color == @playing_board[x_square][y_square].color
                     # convert if else to method -- captured(color)
                     if @playing_board[x_square][y_square].color == 'black'
                         captured_black << @playing_board[x_square][y_square].unicode.encode('utf-8')
@@ -86,7 +90,7 @@ class Game
                 end
                 
                 
-                @playing_board[x_piece][y_piece].update_position([x_square,y_square])
+                my_piece.update_position([x_square,y_square])
                 
                 @playing_board = board.board.update_board([x_piece,y_piece],[x_square,y_square],@playing_board)
                 if promote_pawn(@playing_board[x_square][y_square])
@@ -105,6 +109,7 @@ class Game
                 @y_piece = playing_piece(valid_input)[:y_pos]
                 @x_square = chosen_square(valid_input)[:x_square]
                 @y_square = chosen_square(valid_input)[:y_square]
+                get_piece(x_piece,y_piece)
                 retry
             rescue WrongMoveError => e
                 puts e.message
@@ -114,6 +119,7 @@ class Game
                 @y_piece = playing_piece(valid_input)[:y_pos]
                 @x_square = chosen_square(valid_input)[:x_square]
                 @y_square = chosen_square(valid_input)[:y_square]
+                get_piece(x_piece,y_piece)
                 retry           
             rescue IncorrectMoveError => e
                 puts e.message
@@ -123,6 +129,7 @@ class Game
                 @y_piece = playing_piece(valid_input)[:y_pos]
                 @x_square = chosen_square(valid_input)[:x_square]
                 @y_square = chosen_square(valid_input)[:y_square]
+                get_piece(x_piece,y_piece)
                 retry                
             rescue NoMethodError => e
                 puts "You Picked an empty square"
@@ -132,6 +139,7 @@ class Game
                 @y_piece = playing_piece(valid_input)[:y_pos]
                 @x_square = chosen_square(valid_input)[:x_square]
                 @y_square = chosen_square(valid_input)[:y_square]
+                get_piece(x_piece,y_piece)
                 retry 
             end
             
@@ -149,11 +157,15 @@ class Game
 
     def validate_input(user_input)
        pattern = /^[1-8]{1}[a-h]{1}\s[1-8]{1}[a-h]{1}$/
-       until user_input.match?(pattern) || user_input.match?("undo")
+       until user_input.match?(pattern)
         puts "Wrong Inputs Enter again in format 2a 2b "
         user_input = gets
        end
        user_input
+    end
+
+    def get_piece(x_coord, y_coord)
+        @my_piece = @playing_board[x_coord][y_coord]
     end
 
     def playing_piece(user_input)
@@ -190,15 +202,22 @@ class Game
         false
     end
 
+    def instructions
+        puts "Welome to chess.\nPlayer one is the black pieces.\nPlayer two represents the white pieces."
+        puts "The game is played by choosing the piece you want to move and placing it on the correct square."
+        puts "A move is made by giving input in the following format 2a 3a.\n2a represents the piece being moved.\n3a represents the square to place the piece"
+    end
+
 end
 
 board = BoardSetUp.new
 
-pl1 = Player.new('player one', 'black')
-pl2 = Player.new('player two' , 'white')
+
+pl1 = Player.new("Moses", 'black')
+pl2 = Player.new("Sheila" , 'white')
 
 players = [pl1, pl2]
 
 g = Game.new(board,players)
-
+g.instructions
 g.play
