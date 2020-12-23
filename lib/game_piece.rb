@@ -2,7 +2,7 @@
 
 class GamePiece
   attr_reader :color, :unicode, :position, :prev_pos
-  
+
   def initialize(color, unicode, position)
     @color = color
     @unicode = unicode
@@ -15,9 +15,9 @@ class GamePiece
   end
 
   def update_position(pos)
-    @position = pos     
+    @position = pos
   end
-  
+
   def generate_coords(arr)
     arr.map do |el|
       if el.positive?
@@ -58,7 +58,7 @@ class GamePiece
       x = -1
       y = 0
       generate_path(x, y, current_pos, new_pos)
-    elsif current_pos.first < new_pos.first && current_pos.last == new_pos.last  # down
+    elsif current_pos.first < new_pos.first && current_pos.last == new_pos.last # down
       x = 1
       y = 0
       generate_path(x, y, current_pos, new_pos)
@@ -71,30 +71,29 @@ class GamePiece
       y = -1
       generate_path(x, y, current_pos, new_pos)
     elsif current_pos.first > new_pos.first && current_pos.last < new_pos.last # up-right
-      
+
       x = -1
       y = 1
       generate_path(x, y, current_pos, new_pos)
     elsif current_pos.first > new_pos.first && current_pos.last > new_pos.last # up - left
-      
+
       x = -1
       y = -1
       generate_path(x, y, current_pos, new_pos)
     elsif current_pos.first < new_pos.first && current_pos.last < new_pos.last # down_right
-      
+
       x = 1
       y = 1
       generate_path(x, y, current_pos, new_pos)
     elsif current_pos.first < new_pos.first && current_pos.last > new_pos.last # down_left
-  
+
       x = 1
       y = -1
       generate_path(x, y, current_pos, new_pos)
     else
-      puts "in else"
+      puts 'in else'
 
     end
-    
   end
 
   def generate_path(x, y, current_pos, new_pos)
@@ -184,8 +183,9 @@ class Pawn < GamePiece
     @original_pos = position
     @shift = shift_factor
   end
-  #ensures the pawn can only move forward
-  def shift_factor 
+
+  # ensures the pawn can only move forward
+  def shift_factor
     if @original_pos.first == 6 # the 6 is the original x- coord for the pawns @row 7 at start of game on the board
       -1
     else
@@ -215,12 +215,9 @@ class Pawn < GamePiece
 
     correct_moves(moves)
   end
+
   def capturing_move(y_pos)
     x = (position.last - y_pos).abs
     x.positive?
   end
 end
-
-
-
-
